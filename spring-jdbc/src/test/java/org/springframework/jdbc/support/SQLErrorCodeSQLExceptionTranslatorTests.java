@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2020 the original author or authors.
+ * Copyright 2002-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.verify;
  */
 public class SQLErrorCodeSQLExceptionTranslatorTests {
 
-	private static SQLErrorCodes ERROR_CODES = new SQLErrorCodes();
+	private static final SQLErrorCodes ERROR_CODES = new SQLErrorCodes();
 	static {
 		ERROR_CODES.setBadSqlGrammarCodes("1", "2");
 		ERROR_CODES.setInvalidResultSetAccessCodes("3", "4");
@@ -64,6 +64,7 @@ public class SQLErrorCodeSQLExceptionTranslatorTests {
 	}
 
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void errorCodeTranslation() {
 		SQLExceptionTranslator sext = new SQLErrorCodeSQLExceptionTranslator(ERROR_CODES);
@@ -87,7 +88,7 @@ public class SQLErrorCodeSQLExceptionTranslatorTests {
 
 		SQLException dupKeyEx = new SQLException("", "", 10);
 		DataAccessException dksex = sext.translate("task", "SQL", dupKeyEx);
-		assertThat(DataIntegrityViolationException.class.isInstance(dksex)).as("Not instance of DataIntegrityViolationException").isTrue();
+		assertThat(dksex).isInstanceOf(DataIntegrityViolationException.class);
 
 		// Test fallback. We assume that no database will ever return this error code,
 		// but 07xxx will be bad grammar picked up by the fallback SQLState translator
